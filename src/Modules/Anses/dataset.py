@@ -44,7 +44,7 @@ dataset = dict({
     },
     "08438560305": {
         "name": "Sebastian",
-        "last_name": "De Rosas",        #kdlsfr
+        "last_name": "De Rosas",        
         "cuil" : "08438560305",        
         "phone" : "0114909034",
     },
