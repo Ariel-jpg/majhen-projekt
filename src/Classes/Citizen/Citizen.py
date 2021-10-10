@@ -1,2 +1,2 @@
-class citizen:
+class Citizen:
     pass
