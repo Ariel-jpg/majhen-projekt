@@ -560,8 +560,5 @@ dataset = dict({
         "last_name": "Rodas",
         "cuil" : "34567987644",
         "phone" : "0114575293"
-    
-
-
     }
 })
