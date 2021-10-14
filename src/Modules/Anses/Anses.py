@@ -572,4 +572,3 @@ class Anses:
 
     @staticmethod
     def get_citizen_data(citizen_cuil) -> dict:
-        return dataset.get(citizen_cuil)
