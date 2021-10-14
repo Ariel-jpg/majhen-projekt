@@ -1,4 +1,3 @@
-from os import stat
 from Modules.Anses.Anses import Anses
 
 # Anses.get_citizen_data(cuil) -> dict { name, last_name, cuil, phone }
@@ -52,7 +51,7 @@ class Citizen:
                  self.rejections_list.update({ reciever.cuil : { "reciever": reciever.cuil, "rejections": rejections_counter } })
 
         else:
-            print("The user has dennied your friend request :(")
+            print("The user has denied your friend request :(")
 
 # static class
 class Registration:
@@ -65,7 +64,7 @@ class Registration:
         for _, citizen_data in Registration.registered_citizens.items():
             string = string + str(citizen_data)
 
-        return f"{string}"
+        return string
 
     @staticmethod
     # def sign_up() -> None:
@@ -93,7 +92,7 @@ class Registration:
         citizen_cuil = input("Cuil: ")
         citizen_phone = input("Número de celular: ")
         
-        while (not Registration.exists_register(citizen_cuil, citizen_phone)):
+        while not Registration.register_exists(citizen_cuil, citizen_phone):
             print("Los datos ingresados no corresponden con un usuario registrado. Por favor, verifique los datos e intente de nuevo")
             
             citizen_cuil = input("Cuil: ")
@@ -104,5 +103,5 @@ class Registration:
         return citizen
 
     @staticmethod
-    def exists_register(citizen_cuil, citizen_phone) -> bool: 
+    def register_exists(citizen_cuil, citizen_phone) -> bool: 
         return bool( Registration.registered_citizens.get(citizen_cuil) ) and ( Registration.registered_citizens[citizen_cuil].phone_number == citizen_phone )
