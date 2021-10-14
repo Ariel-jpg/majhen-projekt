@@ -1,0 +1,5 @@
+1) Se llama a la función "sign_up" perteneciente a "Registration"
+1.1) El único dato que necesita ingresar el usuario es su cuil, a partir de ahí (y si el cuil es válido), el registro, en caso que no haya redundancia, se realiza automaticamente.
+1.2) Todos los usuarios registrados son guardados en la clase estática "Registration"
+
+2) Es necesario, luego del registro, iniciar sesión con "Registration.login(args*)" que recibe dos argumentos: el cuil del ciudadano y el número de celular

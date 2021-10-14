@@ -1,11 +1,9 @@
-from Anses import Anses
+from os import stat
+from Modules.Anses.Anses import Anses
 
-
-# Anses.search_citizen(cuil) -> dict { name, last_name, cuil, phone }
+# Anses.get_citizen_data(cuil) -> dict { name, last_name, cuil, phone }
 # Ariel["last_name"]
 # Anses.validate_citizen(cuil) -> bool
-
-
 
 class Citizen:
     friend_list = dict()
@@ -16,6 +14,9 @@ class Citizen:
         self.last_name = last_name
         self.phone_number = phone_number
         self.cuil = cuil
+
+    def __str__(self) -> str:
+        return f"- name: {self.name} \n- last_name: {self.last_name} \n- phone_number: {self.phone_number} \n- cuil: {self.cuil}\n"
 
     def GetRejections(self, citizen) -> dict:
         if self.rejections_list[citizen.cuil]:
@@ -52,23 +53,56 @@ class Citizen:
 
         else:
             print("The user has dennied your friend request :(")
-   
+
+# static class
 class Registration:
-    registered_users = dict()
+    registered_citizens = dict()
 
-    def Registration(self):
-        name = input("Name: ")
-        last_name = input("last_name: ")
-        cuil = input("cuil: ")
-        phone = input("phone: ")
-        if Anses.validate_citizen(name, last_name, cuil, phone):
-            new_citizen = Citizen(name, last_name, cuil, phone)
-            self.registered_users.update({ new_citizen.cuil : new_citizen })
-            print(":) yayyy")
+    @staticmethod
+    def __str__():
+        string = ""
+        
+        for _, citizen_data in Registration.registered_citizens.items():
+            string = string + str(citizen_data)
 
-        else:
-            print("Te quedaste afuera. F")
+        return f"{string}"
 
+    @staticmethod
+    # def sign_up() -> None:
+    def sign_up(cuil) -> None:
+        # citizen_cuil = input('Cuil: ')
+        citizen_cuil = cuil
 
-cami = Registration()
-cami.Registration()
+        while(not Anses.validate_citizen(citizen_cuil)):
+            print("El cuil ingresado no corresponde a un ciudadano real. Por favor verifique los datos e intente de nuevo")
+            citizen_cuil = input('Cuil')
+
+        citizen_data = Anses.get_citizen_data(citizen_cuil)
+        
+        name = citizen_data["name"]
+        last_name = citizen_data["last_name"]
+        phone = citizen_data["phone"]
+       
+        new_citizen = Citizen(name, last_name, phone, citizen_cuil)
+        Registration.registered_citizens.update({ new_citizen.cuil : new_citizen })
+
+    @staticmethod   
+    def login() -> Citizen:
+        print("INICIAR SESIÓN")        
+        
+        citizen_cuil = input("Cuil: ")
+        citizen_phone = input("Número de celular: ")
+        
+        while (not Registration.exists_register(citizen_cuil, citizen_phone)):
+            print("Los datos ingresados no corresponden con un usuario registrado. Por favor, verifique los datos e intente de nuevo")
+            
+            citizen_cuil = input("Cuil: ")
+            citizen_phone = input("Número de celular: ")
+        
+        citizen = Registration.registered_citizens[citizen_cuil]
+
+        return citizen
+
+    @staticmethod
+    def exists_register(citizen_cuil, citizen_phone) -> bool: 
+        return bool( Registration.registered_citizens.get(citizen_cuil) ) and ( Registration.registered_citizens[citizen_cuil].phone_number == citizen_phone )
