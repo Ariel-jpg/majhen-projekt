@@ -1,5 +1,5 @@
-from Classes.Citizen.Citizen import Citizen
 from Modules.Anses.Anses import Anses
+from .Citizen_module.Citizen import Citizen
 
 # static class
 class Registration:
@@ -15,10 +15,8 @@ class Registration:
         return string
 
     @staticmethod
-    # def sign_up() -> None:
-    def sign_up(cuil) -> None:
-        # citizen_cuil = input('Cuil: ')
-        citizen_cuil = cuil
+    def sign_up() -> None:
+        citizen_cuil = input('Cuil: ')
 
         while(not Anses.validate_citizen(citizen_cuil)):
             print("El cuil ingresado no corresponde a un ciudadano real. Por favor verifique los datos e intente de nuevo")
@@ -50,7 +48,12 @@ class Registration:
 
         return citizen
 
-    # DEV METHOD 
+    @staticmethod
+    def register_exists(citizen_cuil, citizen_phone) -> bool: 
+        return bool( Registration.registered_citizens.get(citizen_cuil) ) and ( Registration.registered_citizens[citizen_cuil].phone_number == citizen_phone )
+
+    # DEV METHODS -------------
+
     @staticmethod   
     def login_dev(citizen_cuil, citizen_phone) -> Citizen:
         print("INICIAR SESIÓN")        
@@ -68,6 +71,19 @@ class Registration:
 
         return citizen
 
-    @staticmethod
-    def register_exists(citizen_cuil, citizen_phone) -> bool: 
-        return bool( Registration.registered_citizens.get(citizen_cuil) ) and ( Registration.registered_citizens[citizen_cuil].phone_number == citizen_phone )
+    def sign_up_dev(cuil) -> None:
+        # citizen_cuil = input('Cuil: ')
+        citizen_cuil = cuil
+
+        while(not Anses.validate_citizen(citizen_cuil)):
+            print("El cuil ingresado no corresponde a un ciudadano real. Por favor verifique los datos e intente de nuevo")
+            citizen_cuil = input('Cuil')
+
+        citizen_data = Anses.get_citizen_data(citizen_cuil)
+        
+        name = citizen_data["name"]
+        last_name = citizen_data["last_name"]
+        phone = citizen_data["phone"]
+       
+        new_citizen = Citizen(name, last_name, phone, citizen_cuil)
+        Registration.registered_citizens.update({ new_citizen.cuil : new_citizen })

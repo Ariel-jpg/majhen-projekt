@@ -1,4 +1,4 @@
-from Classes.Friends_requests.Friend_request import Friend_Request
+from ..Admins_module.Admins import Admins
         
 class Citizen:
     def __init__(self, name, last_name, phone_number, cuil) -> None:
@@ -9,6 +9,7 @@ class Citizen:
 
         self.friend_list = dict()
         self.rejections_list = dict()
+        self.block_list = list()
     
     def __str__(self) -> str:
         return f"- name: {self.name} \n- last_name: {self.last_name} \n- phone_number: {self.phone_number} \n- cuil: {self.cuil}\n"
@@ -32,10 +33,11 @@ class Citizen:
     # c1 = sender
     # c2 = reciever 
 
-    def send_friend_request(self, friend) -> None: # Dispatcher - c1 Method
-        Friend_Request(self, friend)
-    
-    def recieve_friend_request(self, sender, friend_request) -> None: # Listener - c2 Method
+    def send_friend_request(self, friend) -> None: # "Dispatcher" - c1 Method
+        admin_in_charge = Admins.get_admin()
+        admin_in_charge.filter_friend_request(self, friend)
+
+    def recieve_friend_request(self, sender, friend_request) -> None: # "Listener" - c2 Method
         print(f"{self.name} {self.last_name} te llegó una solicitud de {sender.name} {sender.last_name}")
 
         response = input("Querés aceptar la solicitud y/n: ").lower()
@@ -47,18 +49,30 @@ class Citizen:
         else: 
             friend_request.reject_friend_request()
     
-    def recieve_answer_friend_request(self, friend_request) -> None: # Listener - c1 Method
+    def recieve_answer_friend_request(self, friend_request) -> None: # "Listener" - c1 Method
         accepted = friend_request.get_response()
-        friend = friend_request.reciever
+        citizen = friend_request.reciever
 
         if accepted:
+            friend = citizen
+
             self.friend_list.update({ friend.get_cuil() : friend.get_formatted_data() })
         else: 
-            friend_id = friend.get_cuil()
+            citizen_id = citizen.get_cuil()
 
-            if bool(self.rejections_list.get(friend_id)):
-                rejections_counter = self.rejections_list.get(friend_id)["rejections_counter"] + 1
+            if bool(self.rejections_list.get(citizen_id)):
+                rejections_counter = self.rejections_list.get(citizen_id)["rejections_counter"]
+                rejections_counter += 1
+
+                if rejections_counter == 5:
+                    friend_request.admin_in_charge.block_citizen(citizen, self.cuil)
+
+                    print(f"Usted fue bloqueado para el usuario {citizen.name} {citizen.last_name}. Motivo: 5 o más solicitudes de amistad rechazadas")
             else: 
                 rejections_counter = 1
 
-            self.rejections_list.update({ friend_id: { "cuil": friend_id, "rejections_counter": rejections_counter } })
+            self.rejections_list.update({ citizen_id: { "cuil": citizen_id, "rejections_counter": rejections_counter } })
+    
+    def exists_citizen_blocked(self, citizen_cuil) -> bool:
+        return citizen_cuil in self.block_list
+            
