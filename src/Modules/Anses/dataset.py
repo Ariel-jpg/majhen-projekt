@@ -1,32 +1,31 @@
-
 dataset = dict({
     "03567492743": {
-        "name": "Abril",
-        "last_name": "Valencci",
+        "name": "Ariel",
+        "last_name": "Aguilera",
         "cuil" : "03567492743",        
         "phone" : "0118568921",
     },
     "20445738571": {
-        "name": "Ada",
+        "name": "Lola",
         "last_name": "Figueroa",
         "cuil" : "20445738571",        
         "phone" : "2994763810",
     },
     "21406826487": {
-        "name": "Lola",
-        "last_name": "De Marco",    
+        "name": "Maximo",
+        "last_name": "Gismondi",    
         "cuil" : "21406826487",        
         "phone" : "2218348361",
     },
     "13458484274": {
-        "name": "Ana",
-        "last_name": "Broda",
+        "name": "Camila",
+        "last_name": "Sidañez",
         "cuil" : "13458484274",        
         "phone" : "2207357381",
     },
     "31325684620": {
-        "name": "Ariel",
-        "last_name": "Aguilar",
+        "name": "Ana",
+        "last_name": "Borda",
         "cuil" : "31325684620",        
         "phone" : "0115735481",
     },
