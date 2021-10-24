@@ -1,6 +1,6 @@
-from ..Friends_requests_module.Friend_request import Friend_Request
-from .Admins import Admins
-from ..Registration import Registration
+.Friends_requests_module.Friend_request import Friend_Request
+Admins import Admins
+.Registration import Registration
 
 class Admin:
     def __init__(self, name, _id, password) -> None:

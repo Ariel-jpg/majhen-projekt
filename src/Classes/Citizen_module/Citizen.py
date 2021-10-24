@@ -1,4 +1,4 @@
-from ..Admins_module.Admins import Admins
+.Admins_module.Admins import Admins
         
 class Citizen:
     def __init__(self, name, last_name, phone_number, cuil) -> None:
