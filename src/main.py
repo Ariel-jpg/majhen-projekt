@@ -3,8 +3,10 @@
 # test 17/10
 
 from Classes.Registration import Registration
-from Classes.Friends_requests_module.Friends_requests import Friends_Requests
-from Classes.Admins_module.Admin import Admins, Admin
+from Classes.State.Friends_requests import Friends_Requests
+from Classes.Admin import Admin
+from Classes.State.Admins import Admins
+from Classes.State.Reports_requests import Reports_requests
 
 # Create Admins -
 
@@ -54,13 +56,13 @@ Camila.send_friend_request(Maximo)
 Lola.send_friend_request(Maximo)
 
 # Blocking at 5 rejections and verification that it works
-Ariel.send_friend_request(Lola)
-Ariel.send_friend_request(Lola)
-Ariel.send_friend_request(Lola)
-Ariel.send_friend_request(Lola)
-Ariel.send_friend_request(Lola)
+# Ariel.send_friend_request(Lola)
+# Ariel.send_friend_request(Lola)
+# Ariel.send_friend_request(Lola)
+# Ariel.send_friend_request(Lola)
+# Ariel.send_friend_request(Lola)
 
-Ariel.send_friend_request(Lola)
+# Ariel.send_friend_request(Lola)
 
 # Administrators block and unblock a user for another user
 Ariel_Admin.block_citizen(Lola, Ariel.get_cuil())
@@ -69,7 +71,25 @@ Ariel.send_friend_request(Lola) # he can't
 Ariel_Admin.unblock_citizen(Lola, Ariel.get_cuil())
 Ariel.send_friend_request(Lola) # he can
 
-Friends_Requests # Debug
-Registration # debug
+Ariel.notify_event("seguridad")
+Lola.notify_event("seguridad")
+Maximo.notify_event("seguridad")
+Camila.notify_event("seguridad")
+Ariel.notify_event("espectaculos")
+Lola.notify_event("seguridad")
+Maximo.notify_event("seguridad")
+Ariel.notify_event("espectaculos")
+Lola.notify_event("seguridad")
+Maximo.notify_event("espectaculos")
 
-print(Registration.__str__()) 
+Ariel.notify_event("salud")
+Ariel.notify_event_with_friend("salud", Lola)
+
+Friends_Requests # debug
+Registration # debug
+Reports_requests # debug
+print("Registro de administradores: \n", Admins.get_all_admins_dev())
+print("Registro de reportes de eventos: \n", Reports_requests.get_all_report_requests_dev())
+print("Registro de solicitudes de amistad: \n", Friends_Requests.get_all_friends_requests_dev())
+
+print(Registration.__str__())

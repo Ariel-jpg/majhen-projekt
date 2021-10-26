@@ -1,6 +1,7 @@
-from ..Friends_requests_module.Friend_request import Friend_Request
-from .Admins import Admins
-from ..Registration import Registration
+from .State.Reports_requests import Reports_requests
+from .Friend_request import Friend_Request
+from .State.Admins import Admins
+from .Registration import Registration
 
 class Admin:
     def __init__(self, name, _id, password) -> None:
@@ -37,8 +38,7 @@ class Admin:
 
             return new_admin
         else:
-            print(
-                "No fue posible crear al administrador. Corrobore sus permisos e intentelo de nuevo")
+            print("No fue posible crear al administrador. Corrobore sus permisos e intentelo de nuevo")
 
             return  # Check
 
@@ -84,5 +84,14 @@ class Admin:
         if not reciever.exists_citizen_blocked(sender.get_cuil()):
             Friend_Request(sender, reciever, self)
         else:
-            print(
-                f"Usted se encuentra bloqueado para el usuario {reciever.name} {reciever.last_name} por lo que no es posible enviarle solicitudes de amistad.")
+            print(f"Usted se encuentra bloqueado para el usuario {reciever.name} {reciever.last_name} por lo que no es posible enviarle solicitudes de amistad.")
+    
+    # Sensor { type_event, ... }
+    def receive_report_request(self, sensor):
+        report_key = sensor.type_event
+        
+        Reports_requests.update_report_request(report_key)
+        reports_number = Reports_requests.get_report_request(report_key)
+
+        if reports_number > 20: pass 
+            # Create and suscribe event

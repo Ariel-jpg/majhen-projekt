@@ -1,4 +1,6 @@
-from ..Admins_module.Admins import Admins
+from .Event import Event_with_friend, Normal_Event
+from .Sensor import Sensor
+from .State.Admins import Admins
         
 class Citizen:
     def __init__(self, name, last_name, phone_number, cuil) -> None:
@@ -75,4 +77,27 @@ class Citizen:
     
     def exists_citizen_blocked(self, citizen_cuil) -> bool:
         return citizen_cuil in self.block_list
+        
+    def notify_event(self, type_event): # type_event : Type_event
+        normal_event = Normal_Event(type_event)
+        Sensor(normal_event)
+    
+    def notify_event_with_friend(self, type_event, friend):
+        if self.friend_list.get(friend.cuil):
+            event = Event_with_friend(type_event, friend, self)            
+        else:
+            print(f"El contacto {friend.name} {friend.last_name} no forma parte de su lista de amigos. Solo se creará el evento") # Check
+
+            event = Normal_Event(type_event)
+        
+        Sensor(event)
+
+    def recieve_friend_invitation(self, event):
+        sender = event.sender
+        print(f"{self.name} {self.last_name} te llego una invitacion a un evento {sender.name} {sender.last_name}")
+        
+        response = input("¿Vas a asistir? (y/n)").lower()
+        
+        if response == "y":
+            Sensor(event)
             

@@ -1,5 +1,5 @@
 from Modules.Base_converter import decimal_to_hexadecimal
-from .Friends_requests import Friends_Requests
+from .State.Friends_requests import Friends_Requests
 from datetime import datetime
 
 # sender is an instance of citizen

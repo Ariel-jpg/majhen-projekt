@@ -1,5 +1,5 @@
 from Modules.Anses.Anses import Anses
-from .Citizen_module.Citizen import Citizen
+from .Citizen import Citizen
 
 # static class
 class Registration:

@@ -31,3 +31,12 @@ class Admins:
             if not admin.blocked:
                 return admin
         # not all administrators can be locked out
+
+    @staticmethod
+    def get_all_admins_dev() -> str:
+        string = ""
+
+        for admin_id, admin in Admins.admins_list.items():
+            string += f"{admin_id}: - name: {admin.name} - blocked: {admin.blocked} \n"
+
+        return string
