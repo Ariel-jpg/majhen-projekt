@@ -1,19 +1,13 @@
 from Modules.Anses.Anses import Anses
 from .Citizen import Citizen
 
-# static class
-class Registration:
-    registered_citizens = dict()
+class Registration_State:
+    def __init__(self) -> None:
+        self.registered_citizens = dict()    
 
-    @staticmethod
-    def __str__():
-        string = ""
-        
-        for _, citizen_data in Registration.registered_citizens.items():
-            string = string + str(citizen_data)
-
-        return string
-
+    def update_registered_citizens(self, new_registered_citezens):
+        self.registered_citizens = new_registered_citezens
+    
     @staticmethod
     def sign_up() -> None:
         citizen_cuil = input('Cuil: ')
@@ -29,8 +23,8 @@ class Registration:
         phone = citizen_data["phone"]
        
         new_citizen = Citizen(name, last_name, phone, citizen_cuil)
-        Registration.registered_citizens.update({ new_citizen.cuil : new_citizen })
-
+        Registration_State.registered_citizens.update({ new_citizen.cuil : new_citizen })
+    
     @staticmethod   
     def login() -> Citizen:
         print("INICIAR SESIÓN")        
@@ -38,21 +32,17 @@ class Registration:
         citizen_cuil = input("Cuil: ")
         citizen_phone = input("Número de celular: ")
         
-        while not Registration.register_exists(citizen_cuil, citizen_phone):
+        while not Registration_State.register_exists(citizen_cuil, citizen_phone):
             print("Los datos ingresados no corresponden con un usuario registrado. Por favor, verifique los datos e intente de nuevo")
             
             citizen_cuil = input("Cuil: ")
             citizen_phone = input("Número de celular: ")
         
-        citizen = Registration.registered_citizens[citizen_cuil]
+        citizen = Registration_State.registered_citizens[citizen_cuil]
 
         return citizen
-
-    @staticmethod
-    def register_exists(citizen_cuil, citizen_phone) -> bool: 
-        return bool( Registration.registered_citizens.get(citizen_cuil) ) and ( Registration.registered_citizens[citizen_cuil].phone_number == citizen_phone )
-
-    # DEV METHODS -------------
+    
+# login and sing up dev
 
     @staticmethod   
     def login_dev(citizen_cuil, citizen_phone) -> Citizen:
@@ -61,15 +51,16 @@ class Registration:
         citizen_cuil = citizen_cuil
         citizen_phone = citizen_phone
         
-        while not Registration.register_exists(citizen_cuil, citizen_phone):
+        while not Registration_State.register_exists(citizen_cuil, citizen_phone):
             print("Los datos ingresados no corresponden con un usuario registrado. Por favor, verifique los datos e intente de nuevo")
             
             citizen_cuil = input("Cuil: ")
             citizen_phone = input("Número de celular: ")
         
-        citizen = Registration.registered_citizens[citizen_cuil]
+        citizen = Registration_State.registered_citizens[citizen_cuil]
 
         return citizen
+    
 
     def sign_up_dev(cuil) -> None:
         # citizen_cuil = input('Cuil: ')
@@ -86,4 +77,17 @@ class Registration:
         phone = citizen_data["phone"]
        
         new_citizen = Citizen(name, last_name, phone, citizen_cuil)
-        Registration.registered_citizens.update({ new_citizen.cuil : new_citizen })
+        Registration_State.registered_citizens.update({ new_citizen.cuil : new_citizen })
+    
+    @staticmethod
+    def register_exists(citizen_cuil, citizen_phone) -> bool: 
+        return bool( Registration_State.registered_citizens.get(citizen_cuil) ) and ( Registration_State.registered_citizens[citizen_cuil].phone_number == citizen_phone )
+
+    @staticmethod
+    def __str__():
+        string = ""
+        
+        for _, citizen_data in Registration_State.registered_citizens.items():
+            string = string + str(citizen_data)
+
+        return string
