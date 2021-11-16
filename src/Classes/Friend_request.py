@@ -1,4 +1,5 @@
-from Modules.Base_converter import decimal_to_hexadecimal
+
+from .Modules.Base_converter import decimal_to_hexadecimal
 from .State.Friends_requests import Friends_Requests
 from datetime import datetime
 

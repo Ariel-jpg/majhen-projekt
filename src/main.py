@@ -2,7 +2,7 @@
 
 # test 17/10
 
-from Classes.Registration import Registration
+from Classes.State.Registration_state import Registration_State as Registration
 from Classes.State.Friends_requests import Friends_Requests
 from Classes.Admin import Admin
 from Classes.State.Admins import Admins

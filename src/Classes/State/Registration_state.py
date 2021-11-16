@@ -1,9 +1,12 @@
-from Modules.Anses.Anses import Anses
-from .Citizen import Citizen
+
+from ..Citizen import Citizen
+from ..Modules.Anses.Anses import Anses
 
 class Registration_State:
+    registered_citizens = dict()
+
     def __init__(self) -> None:
-        self.registered_citizens = dict()    
+        pass
 
     def update_registered_citizens(self, new_registered_citezens):
         self.registered_citizens = new_registered_citezens
@@ -42,7 +45,7 @@ class Registration_State:
 
         return citizen
     
-# login and sing up dev
+    # login and sing up dev
 
     @staticmethod   
     def login_dev(citizen_cuil, citizen_phone) -> Citizen:

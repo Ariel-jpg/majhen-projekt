@@ -1,7 +1,7 @@
 from .State.Reports_requests import Reports_requests
 from .Friend_request import Friend_Request
 from .State.Admins import Admins
-from .Registration import Registration
+from .State.Registration_state import Registration_State as Registration
 
 class Admin:
     def __init__(self, name, _id, password) -> None:
@@ -69,7 +69,7 @@ class Admin:
         # This can be done in two ways:
         # 1: only admins can block citizens. (Chosen)
         # 2: only admins can access citizen methods to block.
-        citizen.block_list.append(citizen_to_block_cuil)
+        citizen.state.block_list.append(citizen_to_block_cuil)
 
     def unblock_citizen(self, citizen, citizen_to_unblock_cuil):
         # This can be done in two ways:
@@ -78,7 +78,7 @@ class Admin:
         citizen_unblock = Registration.registered_citizens[citizen_to_unblock_cuil]
         
         print(f"El usuario {citizen_unblock.name} {citizen_unblock.last_name} fue desbloqueado para el usuario {citizen.name} {citizen.last_name}. \nAcción ejecutada por el administrador: {self.name} \n")
-        citizen.block_list.remove(citizen_to_unblock_cuil)
+        citizen.state.block_list.remove(citizen_to_unblock_cuil)
 
     def filter_friend_request(self, sender, reciever):
         if not reciever.exists_citizen_blocked(sender.get_cuil()):
