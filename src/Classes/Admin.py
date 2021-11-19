@@ -22,9 +22,6 @@ class Admin:
         General_state.get_admins_state().add_admin_to_list(name_new_admin)
     
     def block_admin(self, admin_id):
-        admin_l = General_state.General_state.get_admin(admin_id)
-        print(f"El administrador {self.name} ha bloqueado a {admin_l.get_name()}")
-        print()
         General_state.General_state.block_admin(admin_id)
 
     def load_sensor(self, sensor):
