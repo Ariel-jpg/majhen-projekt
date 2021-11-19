@@ -19,7 +19,7 @@ class General_state:
     
     @staticmethod
     def load_instances():
-        General_state.admins_state.add_admin_to_list(Admin_dev("1", "123", "Hardcoded admin")) # dev
+        General_state.admins_state.add_hardcoded_admin(Admin_dev("1", "123", "Hardcoded admin")) # dev
 
         General_state.admins_state.add_admin_to_list(Admin("Ariel")) # dev
         General_state.admins_state.add_admin_to_list(Admin("Lola")) # dev
@@ -47,6 +47,17 @@ class General_state:
     @staticmethod
     def load_sensor(sensor):
         General_state.sensors.update({ sensor.get_id() : sensor })
+
+    @staticmethod
+    def block_admin(admin_id):
+        admins_state = General_state.get_admins_state()
+        admins_state.block_admin(admin_id)
+
+    @staticmethod
+    def get_admin(admin_id):
+        admins_state = General_state.get_admins_state()
+        admin = admins_state.get_admin(admin_id)
+        return admin
 
 cities_allow = {
     "buenos Aires": { "latitude": 1, "longitude": 1 },

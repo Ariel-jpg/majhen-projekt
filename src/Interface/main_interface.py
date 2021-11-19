@@ -45,13 +45,8 @@ class Interface:
         elif user_entry == "2":
 
             admin = presenter.admin_registration()
-            admins_state = General_state.get_admins_state()
-            admin_to_block = admins_state.get_admin()
-
-            admin.block_admin(admin_to_block.get_id())
             # Call the admin interface
         else:
-            
             # development is lacking
             Sensor_table()
             # Call the sensor table

@@ -14,6 +14,9 @@ class Admins_state:
         if self.validate_admin_exists(admin_id):
             self.admins_list[admin_id]["blocked"] = True
 
+    def add_hardcoded_admin(self, admin_dev):
+        self.admins_list.update({ admin_dev.get_id(): admin_dev })
+
     def add_admin_to_list(self, name_new_admin) -> None:
         new_admin = Admin(name_new_admin)
         

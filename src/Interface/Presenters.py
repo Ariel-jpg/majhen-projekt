@@ -27,7 +27,8 @@ class Presenters:
 
             admin_id = input("Ingrese su 'id' de administrador: ")
             admin_password = input("Ingrese su contraseña de administrador: ")
-                
-        print("-- ¡Registro exitoso! --")
+        
+        admin = admins_state.get_admin(admin_id) 
+        print(f"-- ¡Registro exitoso! Bienvenido administrador {admin.get_name()}--")
 
-        return admins_state.get_admin(admin_id)    
+        return admin     

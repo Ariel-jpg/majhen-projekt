@@ -12,6 +12,9 @@ class Admin:
 
     def get_id(self):
         return self.id_
+    
+    def get_name(self):
+        return self.name
 
     def create_admin(self):
         name_new_admin = input("Ingrese el nombre del nuevo administrador: ")
@@ -19,10 +22,10 @@ class Admin:
         General_state.get_admins_state().add_admin_to_list(name_new_admin)
     
     def block_admin(self, admin_id):
-        
-        print(f"El administrador {self.name} ha bloqueado a {General_state.admins_state.get_admin(admin_id).name}")
-
-        General_state.get_admins_state().block_admin(admin_id)
+        admin_l = General_state.General_state.get_admin(admin_id)
+        print(f"El administrador {self.name} ha bloqueado a {admin_l.get_name()}")
+        print()
+        General_state.General_state.block_admin(admin_id)
 
     def load_sensor(self, sensor):
         General_state_ = General_state.General_state
