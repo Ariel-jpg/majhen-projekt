@@ -1,4 +1,4 @@
-from Modules.Anses.dataset import dataset
+from .Dataset import dataset
 
 class Anses:
     @staticmethod

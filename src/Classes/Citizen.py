@@ -1,103 +1,198 @@
-from .Event import Event_with_friend, Normal_Event
-from .Sensor import Sensor
-from .State.Admins import Admins
-        
-class Citizen:
-    def __init__(self, name, last_name, phone_number, cuil) -> None:
-        self.name = name
-        self.last_name = last_name
-        self.phone_number = phone_number
-        self.cuil = cuil
+from .Requests_module.Friend_requests import Friend_request
 
+from .Event import Birthday_event
+from .Event import Concert_event
+from .Event import Party_event
+from .General_state import General_state
+from .Requests_module.Event_report import Event_invite_friend, Event_report
+from .Sensor import Sensor
+
+cities_allow = {
+    "buenos Aires": { "latitude": 1, "longitude": 1 },
+    "la pampa": { "latitude": 2, "longitude": 2 },
+    "jujuy": { "latitude": 3, "longitude": 3 },
+    "rio negro": { "latitude": 4, "longitude": 4 },
+    "santa cruz": { "latitude": 5, "longitude": 5 },
+    "cordoba": { "latitude": 6, "longitude": 6 },
+    "la rioja": { "latitude": 7, "longitude": 7 },
+    "formosa": { "latitude": 8, "longitude": 8 }
+}
+
+class Citizen_State:
+    def __init__(self) -> None:
         self.friend_list = dict()
         self.rejections_list = dict()
         self.block_list = list()
-    
-    def __str__(self) -> str:
-        return f"- name: {self.name} \n- last_name: {self.last_name} \n- phone_number: {self.phone_number} \n- cuil: {self.cuil}\n"
 
-    def get_cuil(self) -> str:
-        return self.cuil
+    def add_friend(self, friend):
+        print(f'----- Añadiendo a {friend.name} {friend.last_name} a la lista de amigos de {self.name} {self.last_name} -----') # dev
+
+        self.friend_list.update({ friend.get_cuil(): friend.get_formatted_data() })
+    
+    def add_citizen_to_block_list(self, citizen):
+        self.block_list.append(citizen.get_cuil())
+
+    def update_rejections_list(self, citizen):
+        citizen_cuil = citizen.get_cuil()
+
+        print(f'----- Añadiendo a {citizen.name} {citizen.last_name} a la lista de rejections de {self.name} {self.last_name} -----')  # dev
+
+        if self.rejections_list.get(citizen_cuil):
+            new_rejections_counter = self.rejections_list.get(citizen_cuil)["rejections_counter"] + 1
+
+            if new_rejections_counter >= 5:
+                # Presenter ?
+                citizen_data = citizen.get_formatted_data()
+                print(f'Usted fue bloqueado para el usuario {citizen_data["name"]} {citizen_data["last_name"]}. Motivo: 5 solicitudes de amistad rechazadas')
+                #
+
+                citizen.add_citizen_to_block_list(self)
+        else:
+            new_rejections_counter = 1
+
+        self.rejections_list.update({ citizen_cuil: { "cuil": citizen_cuil, "rejections_counter": new_rejections_counter } }) # If the record does not exist then "update" creates it
+
+class Citizen (Citizen_State):
+    def __init__(self, citizen_data) -> None:
+        super().__init__()
+
+        self.name = citizen_data["name"]
+        self.last_name = citizen_data["last_name"]
+        self.phone = citizen_data["phone"]
+        self.cuil = citizen_data["cuil"]
 
     def get_formatted_data(self) -> dict:
         formatted_data = dict({
             "name": self.name,
             "last_name": self.last_name,
-            "phone_number": self.phone_number,
+            "phone": self.phone,
             "cuil": self.cuil,
         })
 
         return formatted_data
 
-    # Friend_list = Citizen Object
-    # Rejections_list = Citizen_cuil: { Citizen_cuil, rejections_counter }
-
-    # c1 = sender
-    # c2 = reciever 
-
-    def send_friend_request(self, friend) -> None: # "Dispatcher" - c1 Method
-        admin_in_charge = Admins.get_admin()
-        admin_in_charge.filter_friend_request(self, friend)
-
-    def recieve_friend_request(self, sender, friend_request) -> None: # "Listener" - c2 Method
-        print(f"{self.name} {self.last_name} te llegó una solicitud de {sender.name} {sender.last_name}")
-
-        response = input("Querés aceptar la solicitud y/n: ").lower()
-
-        if response == "y":
-            self.friend_list.update({ sender.get_cuil() : sender.get_formatted_data() })
-
-            friend_request.accept_friend_request()
-        else: 
-            friend_request.reject_friend_request()
-    
-    def recieve_answer_friend_request(self, friend_request) -> None: # "Listener" - c1 Method
-        accepted = friend_request.get_response()
-        citizen = friend_request.reciever
-
-        if accepted:
-            friend = citizen
-
-            self.friend_list.update({ friend.get_cuil() : friend.get_formatted_data() })
-        else: 
-            citizen_id = citizen.get_cuil()
-
-            if bool(self.rejections_list.get(citizen_id)):
-                rejections_counter = self.rejections_list.get(citizen_id)["rejections_counter"]
-                rejections_counter += 1
-
-                if rejections_counter == 5:
-                    friend_request.admin_in_charge.block_citizen(citizen, self.cuil)
-
-                    print(f"Usted fue bloqueado para el usuario {citizen.name} {citizen.last_name}. Motivo: 5 o más solicitudes de amistad rechazadas")
-            else: 
-                rejections_counter = 1
-
-            self.rejections_list.update({ citizen_id: { "cuil": citizen_id, "rejections_counter": rejections_counter } })
-    
     def exists_citizen_blocked(self, citizen_cuil) -> bool:
         return citizen_cuil in self.block_list
-        
-    def notify_event(self, type_event): # type_event : Type_event
-        normal_event = Normal_Event(type_event)
-        Sensor(normal_event)
+
+    def get_cuil(self) -> str:
+        return self.cuil
     
-    def notify_event_with_friend(self, type_event, friend):
-        if self.friend_list.get(friend.cuil):
-            event = Event_with_friend(type_event, friend, self)            
-        else:
-            print(f"El contacto {friend.name} {friend.last_name} no forma parte de su lista de amigos. Solo se creará el evento") # Check
+    def send_friend_request(self, recipient):
+        response = Friend_request(self, recipient).execute()
 
-            event = Normal_Event(type_event)
-        
-        Sensor(event)
+        if not (response == "citizen_blocked" or response == "are_already_friends" or response == "same_user_error"):
+            self.add_friend(recipient) if response else self.update_rejections_list(recipient)
 
-    def recieve_friend_invitation(self, event):
-        sender = event.sender
-        print(f"{self.name} {self.last_name} te llego una invitacion a un evento {sender.name} {sender.last_name}")
+    def receive_friend_request(self, sender): # Recipient method
+        friend_request_response = Friend_request_presenter(self, sender)
+
+        if friend_request_response: 
+            self.add_friend(sender) 
+
+        return friend_request_response
+
+    def exists_citizen_blocked(self, citizen_cuil):
+        return citizen_cuil in self.block_list
+
+    def exists_friend(self, citizen_cuil):
+        return citizen_cuil in self.friend_list
+
+    def send_event_report(self):
+        sensor = Report_event_presenter(self)
+
+        Event_report(sensor).execute()
+
+    def receive_event_invite(self, sender, event) -> bool: # Recipient method
+        response = Event_invite_presenter(sender, event)
+
+        return response
+
+# ------------------------------- PRESENTER ---------------
+
+def Friend_request_presenter(recipient: Citizen, sender: Citizen) -> bool:
+    sender_data = sender.get_formatted_data()
+
+    print(f'{recipient.name} {recipient.last_name} Te llego una solicitud de amistad de { sender_data.get("name") } { sender_data.get("last_name") }. ¿Queres aceptarla? (y/n): ', end = "")
+    friend_request_ricipient_response = input().lower().strip()
+
+    
+    while not (friend_request_ricipient_response == "y" or friend_request_ricipient_response == "n"):
+        print(friend_request_ricipient_response)
+        friend_request_ricipient_response = input("La opción ingresada no es valida. Por favor ingrese 'y' o 'n'")
+
+    if friend_request_ricipient_response == "y":
+        return True
+    elif friend_request_ricipient_response == "n":
+        return False
+
+def Event_invite_presenter(sender: Citizen, event) -> bool:
+    sender_data = sender.get_formatted_data()
+
+    print(f'El usuario { sender_data.get("name") } { sender_data.get("last_name") } te esta invitando al evento {event.get_description()}. ¿Queres aceptar la invitacion? (y/n): ', end = "")
+    response = str(input())
+
+    return (True if response.lower() == "y" else False)
+
+def Report_event_presenter(citizen: Citizen) -> Sensor:
+    print("¿Qué tipo de evento quiere reportar?")
+    print("1 - Cumpleaños")
+    print("2 - Concierto")
+    print("3 - Fiesta")
+
+    type_event = input()
+
+    while not (type_event == "3" or  type_event >= 1):
+        print("La opcion ingresada es invalida. Por favor ingrese una opcion valida.")
+        print("1 - Cumpleaños")
+        print("2 - Concierto")
+        print("3 - Fiesta")
+
+        type_event = input()
+    
+    event_description = input("Ingrese una descripcion para el evento: ")
+    event_location = input("Ingrese el nombre de la provincie donde está ocurriendo el evento: ")
+
+    while not (cities_allow.get(event_location.lower())):
+        print("La provincia ingresada no forma parte de la cobertura del sistema. Por favor corrobore la provincia e intente de nuevo")
+        event_location = input()
+
+    event_latitude = cities_allow.get(event_location.lower())["latitude"]
+    event_longitude = cities_allow.get(event_location.lower())["longitude"]
+
+    event = Report_event_with_friend_presenter(citizen, event_latitude, event_longitude, event_description, type_event)
+    
+    return Sensor(event)
+
+def Report_event_with_friend_presenter(
+    citizen,
+    event_latitude, 
+    event_longitude, 
+    event_description, 
+    type_event
+) -> Birthday_event | Concert_event | Party_event:
+
+    print("¿Quiere invitar a un amigo al evento? (y/n)", end="")
+    response = input("")
+    
+    if type_event == 1:
+        event = Birthday_event(event_latitude, event_longitude, event_description)
+    elif type_event == 2:
+        event = Concert_event(event_latitude, event_longitude, event_description)
+    else:
+        event = Party_event(event_latitude, event_longitude, event_description)
+
+    if response.lower() == "y":
+        friend_cuil = input("Ingrese el cuil de su amigo: ")
+
+        citizens_state = General_state.get_citizens_state()
+        while not citizens_state.validate_citizen_exists(friend_cuil):
+            print("El usuario ingresado no esta registrado en el sistema. Por favor corrobore los datos e ingrese el cuil de nuevo")
+            friend_cuil = input("Ingrese el cuil de su amigo: ")
         
-        response = input("¿Vas a asistir? (y/n)").lower()
-        
-        if response == "y":
-            Sensor(event)
-            
+        friend = citizens_state.get_citizen(friend_cuil)
+        friend_response = Event_invite_friend(citizen, friend, event).execute()
+
+        if friend_response:
+            event.add_friend(friend)
+    
+    return event
