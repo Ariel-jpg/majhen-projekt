@@ -60,6 +60,7 @@ class Citizen (Citizen_State):
         self.last_name = citizen_data["last_name"]
         self.phone = citizen_data["phone"]
         self.cuil = citizen_data["cuil"]
+        self.blocked = False
 
     def get_formatted_data(self) -> dict:
         formatted_data = dict({
@@ -141,7 +142,7 @@ def Report_event_presenter(citizen: Citizen) -> Sensor:
 
     type_event = input()
 
-    while not (type_event == "3" or  type_event >= 1):
+    while not (type_event == "3" or type_event == "2" or type_event == '1'):
         print("La opcion ingresada es invalida. Por favor ingrese una opcion valida.")
         print("1 - Cumpleaños")
         print("2 - Concierto")
@@ -150,7 +151,7 @@ def Report_event_presenter(citizen: Citizen) -> Sensor:
         type_event = input()
     
     event_description = input("Ingrese una descripcion para el evento: ")
-    event_location = input("Ingrese el nombre de la provincie donde está ocurriendo el evento: ")
+    event_location = input("Ingrese el nombre de la provincia donde está ocurriendo el evento: ")
 
     while not (cities_allow.get(event_location.lower())):
         print("La provincia ingresada no forma parte de la cobertura del sistema. Por favor corrobore la provincia e intente de nuevo")
@@ -171,7 +172,7 @@ def Report_event_with_friend_presenter(
     type_event
 ) -> Birthday_event | Concert_event | Party_event:
 
-    print("¿Quiere invitar a un amigo al evento? (y/n)", end="")
+    print("¿Quiere invitar a un amigo al evento? (y/n): ", end="")
     response = input("")
     
     if type_event == 1:

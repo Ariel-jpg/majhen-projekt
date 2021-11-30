@@ -6,6 +6,8 @@ except ImportError:
     import sys
     Admin = sys.modules[__package__ + '.Admin']
 
+
+
 class Admins_state:
     def __init__(self) -> None:
         self.admins_list = dict()
@@ -17,10 +19,12 @@ class Admins_state:
     def add_hardcoded_admin(self, admin_dev):
         self.admins_list.update({ admin_dev.get_id(): admin_dev })
 
-    def add_admin_to_list(self, name_new_admin) -> None:
+    def add_admin_to_list(self, name_new_admin) -> Admin:
         new_admin = Admin(name_new_admin)
         
         self.admins_list.update({ new_admin.get_id(): new_admin })
+
+        return new_admin
         
     def delete_admin(self, admin) -> None:
         self.admins_list.pop(admin.get_id())

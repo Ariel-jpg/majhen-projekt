@@ -18,9 +18,19 @@ class Admin:
 
     def create_admin(self):
         name_new_admin = input("Ingrese el nombre del nuevo administrador: ")
+        admins_state = General_state.General_state.get_admins_state()
 
-        General_state.get_admins_state().add_admin_to_list(name_new_admin)
-    
+        new_admin = admins_state.add_admin_to_list(name_new_admin)
+
+        return new_admin
+
+    def block_citizen(self, citizen_cuil):
+        citizens_state = General_state.General_state.get_citizens_state()
+        citizens_state.block_citizen(citizen_cuil)
+
+    def get_password(self) -> str:
+        return self.password
+
     def block_admin(self, admin_id):
         General_state.General_state.block_admin(admin_id)
 
@@ -41,6 +51,8 @@ class Admin:
             sensor_.update_concurrency(sensor.get_actual_concurrency())
         else:
             General_state_.load_sensor(sensor)
+    
+    
  
 class Admin_dev (Admin):
     def __init__(self, id_, password, name) -> None:

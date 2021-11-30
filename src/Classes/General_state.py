@@ -16,6 +16,10 @@ class General_state:
     citizens_state = Citizens_state()
     requests_state = Requests_state()
     sensors = dict()
+
+    @staticmethod
+    def get_sensors():
+        return General_state.sensors
     
     @staticmethod
     def load_instances():
@@ -43,6 +47,11 @@ class General_state:
     @staticmethod
     def get_citizens_state():
         return General_state.citizens_state
+    
+    @staticmethod
+    def block_citizen(citizen_cuil):
+        citizen_state = General_state.get_citizens_state()
+        citizen_state.block_citizen(citizen_cuil)
 
     @staticmethod
     def load_sensor(sensor):
@@ -58,6 +67,7 @@ class General_state:
         admins_state = General_state.get_admins_state()
         admin = admins_state.get_admin(admin_id)
         return admin
+
 
 cities_allow = {
     "buenos Aires": { "latitude": 1, "longitude": 1 },
