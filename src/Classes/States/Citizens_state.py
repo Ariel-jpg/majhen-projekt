@@ -27,3 +27,9 @@ class Citizens_state:
         random_citizen = self.citizens_list.get(list_temp[index])
         
         return random_citizen
+
+    def block_citizen(self, citizen_cuil):
+        citizen = self.get_citizen(citizen_cuil)
+        citizen.blocked = True
+
+        self.citizens_list.update({ citizen.get_cuil(): citizen })
