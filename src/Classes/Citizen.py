@@ -7,15 +7,11 @@ from .General_state import General_state
 from .Requests_module.Event_report import Event_invite_friend, Event_report
 from .Sensor import Sensor
 
-cities_allow = {
-    "buenos Aires": { "latitude": 1, "longitude": 1 },
-    "la pampa": { "latitude": 2, "longitude": 2 },
-    "jujuy": { "latitude": 3, "longitude": 3 },
-    "rio negro": { "latitude": 4, "longitude": 4 },
-    "santa cruz": { "latitude": 5, "longitude": 5 },
-    "cordoba": { "latitude": 6, "longitude": 6 },
-    "la rioja": { "latitude": 7, "longitude": 7 },
-    "formosa": { "latitude": 8, "longitude": 8 }
+zones = {
+    "Zona 1": 1,
+    "Zona 2": 2,
+    "Zona 3": 3,
+    "Zona 4": 4
 }
 
 class Citizen_State:
@@ -141,7 +137,7 @@ def Report_event_presenter(citizen: Citizen) -> Sensor:
 
     type_event = input()
 
-    while not (type_event == "3" or  type_event >= 1):
+    while not (type_event == "3" or  type_event == "2" or type_event == "1"):
         print("La opcion ingresada es invalida. Por favor ingrese una opcion valida.")
         print("1 - Cumpleaños")
         print("2 - Concierto")
@@ -150,14 +146,14 @@ def Report_event_presenter(citizen: Citizen) -> Sensor:
         type_event = input()
     
     event_description = input("Ingrese una descripcion para el evento: ")
-    event_location = input("Ingrese el nombre de la provincie donde está ocurriendo el evento: ")
+    event_location = input("Ingrese el nombre de la provincia donde está ocurriendo el evento: ")
 
-    while not (cities_allow.get(event_location.lower())):
+    while not (zones.get(event_location.lower())):
         print("La provincia ingresada no forma parte de la cobertura del sistema. Por favor corrobore la provincia e intente de nuevo")
         event_location = input()
 
-    event_latitude = cities_allow.get(event_location.lower())["latitude"]
-    event_longitude = cities_allow.get(event_location.lower())["longitude"]
+    event_latitude = zones.get(event_location.lower())["latitude"]
+    event_longitude = zones.get(event_location.lower())["longitude"]
 
     event = Report_event_with_friend_presenter(citizen, event_latitude, event_longitude, event_description, type_event)
     

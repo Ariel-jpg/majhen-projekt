@@ -1,7 +1,7 @@
 from .Admin import Admin, Admin_dev
 from .Event import Birthday_event, Concert_event, Party_event
 from .Requests_module.Event_report import Event_invite_friend
-from .Sensor import Sensor
+from .Sensor import Sensor, Sensor_load
 from . import Citizen
 
 from .Modules.Dataset import dataset
@@ -9,22 +9,69 @@ from .States.Admins_state import Admins_state
 from .States.Citizens_state import Citizens_state
 from .States.Requests_state import Requests_state
 
-
 # Static class
 class General_state:
     admins_state = Admins_state()
     citizens_state = Citizens_state()
     requests_state = Requests_state()
     sensors = dict()
+
+    @staticmethod
+    def load_sensors():
+        sensor1 = Sensor_load(1, Concert_event(1, "Concierto 1"), 12)
+        sensor2 = Sensor_load(2, Concert_event(3, "Concierto 2"), 123)
+        sensor3 = Sensor_load(3, Concert_event(2, "Concierto 3"), 1000)
+        sensor4 = Sensor_load(4, Concert_event(3, "Concierto 4"), 900)
+        sensor5 = Sensor_load(5, Concert_event(1, "Concierto 5"), 54)
+        sensor6 = Sensor_load(6, Concert_event(1, "Concierto 34"), 1000)
+        sensor7 = Sensor_load(7, Concert_event(1, "Concierto 234"), 89)
+        sensor8 = Sensor_load(8, Concert_event(1, "Concierto 213"), 390)
+
+        General_state.sensors.update({ sensor1.get_id(): sensor1 })
+        General_state.sensors.update({ sensor2.get_id(): sensor2 })
+        General_state.sensors.update({ sensor3.get_id(): sensor3 })
+        General_state.sensors.update({ sensor4.get_id(): sensor4 })
+        General_state.sensors.update({ sensor5.get_id(): sensor5 })
+        General_state.sensors.update({ sensor6.get_id(): sensor6 })
+        General_state.sensors.update({ sensor7.get_id(): sensor7 })
+        General_state.sensors.update({ sensor8.get_id(): sensor8 })
+
+    @staticmethod
+    def get_sensors():
+        return General_state.sensors
+
+    @staticmethod
+    def get_sensors_formatted_data():
+        sensors_dict = dict()
+
+        for sensor_id, sensor in General_state.get_sensors().items():
+            event = sensor.get_event()
+
+            sensors_dict.update({ 
+                sensor_id: {
+                    "_id" : sensor_id,
+                    "concurrency": sensor.get_actual_concurrency(),
+                    "event": {
+                        "description": event.description,
+                        "zone": event.zone
+                    }
+                } 
+            })
+
+        return sensors_dict
+
     
     @staticmethod
     def load_instances():
-        General_state.admins_state.add_hardcoded_admin(Admin_dev("1", "123", "Hardcoded admin")) # dev
+        admins_state = General_state.get_admins_state()
+        admins_state.add_hardcoded_admin(Admin_dev("1", "123", "Hardcoded admin")) # dev
 
-        General_state.admins_state.add_admin_to_list(Admin("Ariel")) # dev
-        General_state.admins_state.add_admin_to_list(Admin("Lola")) # dev
-        General_state.admins_state.add_admin_to_list(Admin("Camila")) # dev
-        General_state.admins_state.add_admin_to_list(Admin("Maximo")) # dev
+        admins_state.add_admin_to_list("Ariel") # dev
+        admins_state.add_admin_to_list("Lola") # dev
+        admins_state.add_admin_to_list("Camila") # dev
+        admins_state.add_admin_to_list("Maximo") # dev
+
+        General_state.load_sensors()
 
         General_state.citizens_state.add_citizen_to_list(Citizen.Citizen({ "name": "Ariel", "last_name": "Aguilera", "cuil" : "1234", "phone" : "123" }))
         counter = 0
@@ -59,7 +106,7 @@ class General_state:
         admin = admins_state.get_admin(admin_id)
         return admin
 
-cities_allow = {
+zones = {
     "buenos Aires": { "latitude": 1, "longitude": 1 },
     "la pampa": { "latitude": 2, "longitude": 2 },
     "jujuy": { "latitude": 3, "longitude": 3 },
@@ -113,12 +160,12 @@ def Report_event_presenter(citizen) -> Sensor:
     event_description = input("Ingrese una descripcion para el evento: ")
     event_location = input("Ingrese el nombre de la provincie donde está ocurriendo el evento: ")
 
-    while not (cities_allow.get(event_location.lower())):
+    while not (zones.get(event_location.lower())):
         print("La provincia ingresada no forma parte de la cobertura del sistema. Por favor corrobore la provincia e intente de nuevo")
         event_location = input()
 
-    event_latitude = cities_allow.get(event_location.lower())["latitude"]
-    event_longitude = cities_allow.get(event_location.lower())["longitude"]
+    event_latitude = zones.get(event_location.lower())["latitude"]
+    event_longitude = zones.get(event_location.lower())["longitude"]
 
     event = Report_event_with_friend_presenter(citizen, event_latitude, event_longitude, event_description, type_event)
     

@@ -40,7 +40,6 @@ class Interface:
             citizen.send_event_report()
             citizen.send_event_report()
             citizen.send_event_report()
-            
             # Call the citizen interface
         elif user_entry == "2":
 
@@ -48,5 +47,5 @@ class Interface:
             # Call the admin interface
         else:
             # development is lacking
-            Sensor_table()
+            print(Sensor_table().get_ranking())
             # Call the sensor table

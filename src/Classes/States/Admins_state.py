@@ -29,8 +29,6 @@ class Admins_state:
         return bool(self.admins_list.get(admin_id))
 
     def login_admin(self, admin_id: str, admin_password: str) -> bool:
-        print(self.admins_list)
-        
         if self.admins_list.get(admin_id) and self.admins_list.get(admin_id).password == admin_password:
             return True
         
