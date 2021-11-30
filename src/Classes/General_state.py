@@ -17,6 +17,15 @@ class General_state:
     sensors = dict()
 
     @staticmethod
+    def get_sensors():
+        return General_state.sensors
+        
+    @staticmethod
+    def block_citizen(citizen_cuil):
+        citizen_state = General_state.get_citizens_state()
+        citizen_state.block_citizen(citizen_cuil)
+
+    @staticmethod
     def load_sensors():
         sensor1 = Sensor_load(1, Concert_event(1, "Concierto 1"), 12)
         sensor2 = Sensor_load(2, Concert_event(3, "Concierto 2"), 123)
@@ -94,6 +103,7 @@ class General_state:
     @staticmethod
     def load_sensor(sensor):
         General_state.sensors.update({ sensor.get_id() : sensor })
+        print()
 
     @staticmethod
     def block_admin(admin_id):
@@ -161,7 +171,7 @@ def Report_event_presenter(citizen) -> Sensor:
     event_location = input("Ingrese el nombre de la provincie donde está ocurriendo el evento: ")
 
     while not (zones.get(event_location.lower())):
-        print("La provincia ingresada no forma parte de la cobertura del sistema. Por favor corrobore la provincia e intente de nuevo")
+        print("La zona ingresada no forma parte de la cobertura del sistema. Por favor corrobore la zona e intente de nuevo")
         event_location = input()
 
     event_latitude = zones.get(event_location.lower())["latitude"]

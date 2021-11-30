@@ -31,7 +31,7 @@ class Admin:
     def get_password(self) -> str:
         return self.password
 
-    def block_admin(self, admin_id):
+    def block_admin(self, admin_id) -> None:
         General_state.General_state.block_admin(admin_id)
 
     def load_sensor(self, sensor):

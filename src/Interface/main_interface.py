@@ -1,6 +1,10 @@
 
 from Import_index import Sensor_table, General_state, Citizen, Admin, Sensor
 from .Presenters import Presenters
+from json_module.json_main import Json
+from Map.Zones import Zones
+from tabulate import tabulate
+
 #import from general_state General state, and then load sensor???
 class Interface:
     def __init__(self) -> None:
@@ -38,19 +42,7 @@ class Interface:
 
         if user_entry == "1":
             citizen = presenter.citizen_registration()
-            
-            # rand_citizen = General_state.citizens_state.get_random_citizen
 
-            # citizen.send_friend_request(rand_citizen())
-            # citizen.send_friend_request(rand_citizen())
-            # citizen.send_friend_request(rand_citizen())
-            # citizen.send_friend_request(rand_citizen())
-            # citizen.send_friend_request(rand_citizen())
-
-            # citizen.send_event_report()
-            # citizen.send_event_report()
-            # citizen.send_event_report()
-            # Call the citizen interface
             self.citizen_interface(citizen)
 
         elif user_entry == "2":
@@ -110,8 +102,6 @@ class Interface:
 
             admin_entry = self.control_data_entry(5)
 
-            presenter = Presenters()
-
             if admin_entry == '1':      # show staticts table
                 print('-- Ver tabla de estadisticas fue seleccionado --')
                 print('Ver tabla de estadisticas de la zona:')
@@ -120,33 +110,37 @@ class Interface:
                 print('3. Zona 3')
                 print('4. Zona 4')
                 print('5. Volver a menu Administrador.')
-
+                
                 states_table_entry = self.control_data_entry(5)
 
-                presenter = Presenters()
-
-                if states_table_entry == '1':
-                    print('-- Mostrando tabla de zona 1 --')
-
-                
-                elif states_table_entry == '2':
-                    print('-- Mostrando tabla de zona 2 --')
-
-
-                elif states_table_entry == '3':
-                    print('-- Mostrando tabla de zona 3 --')
-
-                
-                elif states_table_entry == '4':
-                    print('-- Mostrando tabla de zona 4 --')
-
-                elif states_table_entry == '5':
+                if states_table_entry == '5':
                     self.admin_interface(admin_logged)
 
+                print(f'-- Mostrando tabla de zona {states_table_entry} --')
+                sensors_dict = General_state.get_sensors_formatted_data()
+                zones = Zones(states_table_entry, sensors_dict)
+                statistics_by_zone = zones.get_statistics(int(states_table_entry))
+                
+                sensors = General_state.get_sensors()
+                
+                table_data = self.format_statistics(statistics_by_zone, sensors)
+              
+                print(tabulate(table_data, headers="keys", tablefmt="fancy_grid"))
 
-
+                self.admin_interface(admin_logged)
+              
             elif admin_entry == '2':        # show sensors
                 print('-- Ver sensores fue seleccionado -- ')           #maybe not show this
+                print('¿Que accion desea realizar?')
+                sensors = General_state.get_sensors()
+
+                for sensor_id, sensor in sensors.items():
+                    print(sensor_id) 
+                    print(f"- Concurrencia: {sensor.get_actual_concurrency()}")
+                    print(f"- Tipo de evento: {sensor.event.get_type_event_str()}")
+                    print(f"- Descripcion del evento: {sensor.get_event_description()}")
+
+                self.admin_interface(admin_logged)
 
             elif admin_entry == '3':        # create/ block/ delete admin
                 print('-- Opciones de Administrador fue seleccionado -- ')
@@ -154,26 +148,29 @@ class Interface:
                 print('1. Crear un administrador')
                 print('2. Bloquear un administrador')
                 print('3. Eliminar un administrador')
-                print('4. Volver a menu Administrador')
+                print('4. Ver ranking de sensores por zona')
+                print('5. Volver a menu Administrador')
                 
                 options_admin_entry = self.control_data_entry(4)
-
-                presenter = Presenters()
 
                 if options_admin_entry == '1':      # create admin
                     print('-- Crear un administrador fue seleccionado --')
                     new_admin = admin_logged.create_admin()
 
-                    print('Un nuevo administrador fue creado')
-                    print(f'ID:{new_admin.Admin.get_id()}')
-                    print(f'Password: ', new_admin.get_password())
+                    print('Un nuevo administrador fue creado, sus credenciales son: ')
+                    print(f'- ID:{new_admin.get_id()}')
+                    print(f'- Password: {new_admin.get_password()}')
+
+                    self.admin_interface(admin_logged)
                     
                 elif options_admin_entry == '2':        #block admin
                     print('Bloquear un administrador fue seleccionado --')
                     id_admin = input('ID del administrador al que se desea bloquear: ')     
                     print(f'{id_admin}')
-                    Admin.block_admin(id_admin)
-                    print(f'Administrador {id_admin} fue bloquado.')
+                    admin_logged.block_admin(id_admin)
+                    print(f'Administrador {id_admin} fue bloqueado.')
+                    
+                    self.admin_interface(admin_logged)
                 
                 elif options_admin_entry == '3':        #delete admin
                     print('-- Eliminar un administrador fue seleccionado --')
@@ -184,13 +181,16 @@ class Interface:
                     
                     admins_state.delete_admin(id_admin)
 
-                    print('Administador fue eliminado.')
-
+                    print(f'El administrador con el id: {id_admin} fue eliminado.')
+                    self.admin_interface(admin_logged)
 
                 elif options_admin_entry == '4':        #go back to admin menu
                     self.admin_interface(admin_logged)
 
-            elif admin_entry == '4':        #  block citizen, show random citizen getting blocked
+            elif admin_entry == '4':
+                print('--  -- ')
+                
+            elif admin_entry == '5':        #  block citizen, show random citizen getting blocked
                 print('-- Opciones ciudadano seleccionado -- ')
                 print('¿Que accion desea realizar?')
                 print('1. Bloquear un ciudadano')
@@ -198,12 +198,21 @@ class Interface:
 
                 citizen_options = self.control_data_entry(2)
 
-                presenter = Presenters()
-
                 if citizen_options == '1':      #block citizen from admin POV
-                    print('-- bloquear ciudadano fue seleccionado -- ')
-                    get_cuil_cit = input('Cuil del ciudadano que se desea bloquear: ')
-                    #where is it???
+                    print('-- Bloquear ciudadano fue seleccionado -- ')
+                    cuil_citizen = input('Cuil del ciudadano que se desea bloquear: ')
+
+                    citizens_state = General_state.get_citizens_state()
+
+                    while not citizens_state.validate_citizen_exists(cuil_citizen):
+                        cuil_citizen = input('Corrobore que el cuil del ciudadano que desea bloquear: ')
+
+                    General_state.block_citizen(cuil_citizen)
+                    citizen = citizens_state.get_citizen(cuil_citizen)
+
+                    print(f'-- El ciudadano con el cuil {citizen.name} {citizen.last_name} fue bloqueado -- ')
+
+                    self.admin_interface(admin_logged)
 
                 elif citizen_options == '2':    #exit to admin menu
                     self.admin_interface(admin_logged)
@@ -235,7 +244,10 @@ class Interface:
                     sensors = General_state.get_sensors()
 
                     for sensor_id, sensor in sensors.items():
-                        print(sensor_id + ': \n - Concurrencia:' + sensor.get_actual_concurrency() + '\n - Tipo de evento: ' + sensor.event.get_type_events_str + '- Descripcion del evento: ' + sensor.get_event_description() )
+                        print(sensor_id) 
+                        print(f"- Concurrencia: {sensor.get_actual_concurrency()}")
+                        print(f"- Tipo de evento: {sensor.event.get_type_event_str()}")
+                        print(f"- Descripcion del evento: {sensor.get_event_description()}")
 
                     self.sensor_interface()
 
@@ -249,7 +261,7 @@ class Interface:
 
     def map_interface(self):
         def initiate_map_interface():
-            print('-- Ver mapa fue seleccionado --')
+            print('-- Ver mapa fue seleccionado --') # TODO
             print('Ver mapa de la zona:')
             print('1. Zona 1')
             print('2. Zona 2')
@@ -264,7 +276,24 @@ class Interface:
 
             print(f"-- Mostrando mapa de la zona {map_entry} --")
 
+            sensors_dict = General_state.get_sensors_formatted_data()
+            zones = Zones([1, 2, 3, 4], sensors_dict)
+
+            zones.print_map_zone(int(map_entry))
+
             initiate_map_interface()
             # TODO
 
         initiate_map_interface()
+
+    def format_statistics(self, statistics_by_zone, sensors):
+            table_data = dict({ "ID": [], "Tipo de evento": [], "Descripcion": [], "Concurrencia": [] })
+                
+            for i in range(len(statistics_by_zone)):
+                real_sensor = sensors.get(statistics_by_zone[i]["id_"])
+
+                table_data.get("ID").append(real_sensor.get_id())
+                table_data.get("Tipo de evento").append(real_sensor.event.get_type_event_str())
+                table_data.get("Descripcion").append(real_sensor.get_event_description())
+                table_data.get("Concurrencia").append(real_sensor.get_actual_concurrency())
+            return table_data

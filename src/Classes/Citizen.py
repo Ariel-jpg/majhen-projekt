@@ -8,10 +8,10 @@ from .Requests_module.Event_report import Event_invite_friend, Event_report
 from .Sensor import Sensor
 
 zones = {
-    "Zona 1": 1,
-    "Zona 2": 2,
-    "Zona 3": 3,
-    "Zona 4": 4
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4
 }
 
 class Citizen_State:
@@ -147,23 +147,19 @@ def Report_event_presenter(citizen: Citizen) -> Sensor:
         type_event = input()
     
     event_description = input("Ingrese una descripcion para el evento: ")
-    event_location = input("Ingrese el nombre de la provincia donde está ocurriendo el evento: ")
+    zone = input("Ingrese la zona donde está ocurriendo el evento (1 a 4): ")
 
-    while not (zones.get(event_location.lower())):
-        print("La provincia ingresada no forma parte de la cobertura del sistema. Por favor corrobore la provincia e intente de nuevo")
-        event_location = input()
+    while not (zones.get(zone.lower())):
+        print("La zona ingresada no forma parte de la cobertura del sistema. Por favor corrobore la zona e intente de nuevo")
+        zone = input()
 
-    event_latitude = zones.get(event_location.lower())["latitude"]
-    event_longitude = zones.get(event_location.lower())["longitude"]
-
-    event = Report_event_with_friend_presenter(citizen, event_latitude, event_longitude, event_description, type_event)
+    event = Report_event_with_friend_presenter(citizen, int(zone), event_description, type_event)
     
     return Sensor(event)
 
 def Report_event_with_friend_presenter(
     citizen,
-    event_latitude, 
-    event_longitude, 
+    zone, 
     event_description, 
     type_event
 ) -> Birthday_event | Concert_event | Party_event:
@@ -172,11 +168,11 @@ def Report_event_with_friend_presenter(
     response = input("")
     
     if type_event == 1:
-        event = Birthday_event(event_latitude, event_longitude, event_description)
+        event = Birthday_event(zone, event_description)
     elif type_event == 2:
-        event = Concert_event(event_latitude, event_longitude, event_description)
+        event = Concert_event(zone, event_description)
     else:
-        event = Party_event(event_latitude, event_longitude, event_description)
+        event = Party_event(zone, event_description)
 
     if response.lower() == "y":
         friend_cuil = input("Ingrese el cuil de su amigo: ")

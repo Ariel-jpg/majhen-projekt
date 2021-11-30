@@ -51,3 +51,19 @@ class Zones:
                 x = 0
 
         map_zone.print_map()
+
+    def get_statistics(self, zone_number, ranking = False):
+        sensors_dictionary = dict()
+        sensors_zone_list = self.sensors_by_zone[zone_number]
+        
+        for sensor_info in sensors_zone_list:
+            sensors_dictionary.update({ sensor_info["_id"]: sensor_info })
+
+        sensor_table = Sensor_table(sensors_dictionary)
+        
+        order_sensors = sensor_table.order_sensors(True)
+
+        if ranking:
+            order_sensors = order_sensors[0::2]
+
+        return order_sensors
