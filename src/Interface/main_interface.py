@@ -50,7 +50,6 @@ class Interface:
             # citizen.send_event_report()
             # citizen.send_event_report()
             # citizen.send_event_report()
-            
             # Call the citizen interface
             self.citizen_interface(citizen)
 

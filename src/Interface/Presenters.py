@@ -10,7 +10,7 @@ class Presenters:
         # Load citizen to the system
         citizen_data = Anses.get_citizen_data(citizen_cuil)
         citizen = Citizen(citizen_data)
-        General_state.citizens_state.add_citizen_to_list(citizen)
+        General_state.get_citizens_state().add_citizen_to_list(citizen)
         # 
         
         print("-- ¡Registro exitoso! --")
@@ -19,6 +19,7 @@ class Presenters:
 
     def admin_registration(self) -> Admin:
         admins_state = General_state.get_admins_state()
+
         admin_id = input("Ingrese su 'id' de administrador: ")
         admin_password = input("Ingrese su contraseña de administrador: ")
 
@@ -31,4 +32,4 @@ class Presenters:
         admin = admins_state.get_admin(admin_id) 
         print(f"-- ¡Registro exitoso! Bienvenido administrador {admin.get_name()}--")
 
-        return admin     
+        return admin
