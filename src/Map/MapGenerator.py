@@ -22,6 +22,7 @@ class Map:
 
             k = k+1
         line = line + "|"
+        
         return line
 
     def s_row(self, length):
@@ -29,6 +30,7 @@ class Map:
         for _ in range(0, length):
             line = line + "+---"
         line = line + "+"
+
         return line
 
     def make_map(self, length, width):

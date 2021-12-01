@@ -8,14 +8,12 @@ from . import Citizen
 from .Modules.Dataset import dataset
 from .States.Admins_state import Admins_state
 from .States.Citizens_state import Citizens_state
-from .States.Requests_state import Requests_state
 from .Modules.json_module.json_main import Json
 
 # Static class
 class General_state:
     admins_state = Admins_state()
     citizens_state = Citizens_state()
-    requests_state = Requests_state()
     sensors = dict()
 
     @staticmethod

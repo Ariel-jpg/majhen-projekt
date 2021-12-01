@@ -1,9 +1,4 @@
-from . import General_state
-
-class Table:
-    pass
-
-class Sensor_table (Table):
+class Sensor_table:
     def __init__(self, sensors) -> None:
         super().__init__()
         self.sensors = sensors
@@ -16,7 +11,6 @@ class Sensor_table (Table):
         sensors_list = list()
 
         for key, value in sensors_dictionary.items():
-            # values = (sensors_dictionary.get(key).get_actual_concurrency())
             sensors_list_dict1.append({'id_': key, 'concurrency': value["concurrency"] })
             sensors_list_dict2.append({'id_': key, 'concurrency': value["concurrency"]})
 
@@ -30,6 +24,3 @@ class Sensor_table (Table):
                         sensors_list_dict2[i] = sensor_key
 
         return sensors_list_dict2 
-
-class General_table (Table):
-    pass

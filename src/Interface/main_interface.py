@@ -283,16 +283,16 @@ class Interface:
 
     # Format Methods
     def format_statistics(self, statistics_by_zone, sensors):
-            table_data = dict({ "ID": [], "Tipo de evento": [], "Descripcion": [], "Concurrencia": [] })
-                
-            for i in range(len(statistics_by_zone)):
-                real_sensor = sensors.get(statistics_by_zone[i]["id_"])
-
-                table_data.get("ID").append(real_sensor["_id"])
-                table_data.get("Tipo de evento").append(real_sensor["event"]["type_event"])
-                table_data.get("Descripcion").append(real_sensor["event"]["description"])
-                table_data.get("Concurrencia").append(real_sensor["concurrency"])
-            return table_data
+        table_data = dict({ "ID": [], "Tipo de evento": [], "Descripcion": [], "Concurrencia": [] })
+            
+        for i in range(len(statistics_by_zone)):
+            real_sensor = sensors.get(statistics_by_zone[i]["id_"])
+            
+            table_data.get("ID").append(real_sensor["_id"])
+            table_data.get("Tipo de evento").append(real_sensor["event"]["type_event"])
+            table_data.get("Descripcion").append(real_sensor["event"]["description"])
+            table_data.get("Concurrencia").append(real_sensor["concurrency"])
+        return table_data
     
     def control_data_entry(self, options_quantity) -> str:
         'Solo puede retornar una opcion valida para el sistema'
