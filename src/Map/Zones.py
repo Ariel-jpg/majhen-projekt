@@ -1,4 +1,5 @@
 from .MapGenerator import Map
+import math
 from Import_index import Sensor_table
 
 class Zones:
@@ -22,7 +23,17 @@ class Zones:
         return sensors_list
 
     def print_map_zone(self, zone_number):
-        map_zone = Map(2, 2)
+
+        def get_par_number(number):
+            rounded = number
+
+            if number % 2 == 1:
+                rounded = number + 1
+
+            return math.ceil(rounded)
+
+        length = get_par_number(len(self.sensors_by_zone[zone_number]) / 2)
+        map_zone = Map(length, 2)
 
         sensors_dictionary = dict()
         sensors_zone_list = self.sensors_by_zone[zone_number]
@@ -36,20 +47,19 @@ class Zones:
         
         x, y = 0, 0
 
-        if len(sensors_zone_list) >= 4: max_range = 4
-        else: max_range = len(sensors_zone_list)
-
-        for i in range(0, max_range):
+        for i in range(0, len(sensors_zone_list)):
             sensor_concurrency = order_sensors[i]["concurrency"]
 
             map_zone.assign_event(x, y, sensor_concurrency)
 
-            if x < 1:
-                x += 1
-            else:
+            if y < 1:
                 y += 1
-                x = 0
+            else:
+                x += 1
+                y = 0
 
+        if length == 0:
+            print("-- No hay sensores registrados en la zona --")
         map_zone.print_map()
 
     def get_statistics(self, zone_number, ranking = False):
@@ -64,6 +74,7 @@ class Zones:
         order_sensors = sensor_table.order_sensors(True)
 
         if ranking:
-            order_sensors = order_sensors[0::2]
+            if not len(order_sensors) < 3: 
+                order_sensors = order_sensors[0::2]
 
         return order_sensors

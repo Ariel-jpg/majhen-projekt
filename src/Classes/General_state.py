@@ -62,7 +62,8 @@ class General_state:
                     "concurrency": sensor.get_actual_concurrency(),
                     "event": {
                         "description": event.description,
-                        "zone": event.zone
+                        "zone": event.zone,
+                        "type_event": event.get_type_event_str()
                     }
                 } 
             })

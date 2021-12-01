@@ -7,27 +7,8 @@ from tabulate import tabulate
 
 #import from general_state General state, and then load sensor???
 class Interface:
-    def __init__(self) -> None:
-        self.role = None
-        
+    def __init__(self) -> None:        
         self.inicialize()
-
-    def control_data_entry(self, options_quantity) -> str:
-        'Solo puede retornar una opcion valida para el sistema'
-
-        entry = input().strip()
-
-        try:
-            for char in entry:
-                cast_test = int(char)
-        except:
-            entry = 1000
-
-        while not (int(entry) > 0 and int(entry) <= options_quantity):
-                print(f"Por favor introduzca una opción válida para ingresar al sistema (del 1 al {options_quantity}): ", end='')
-                entry = input()    
-
-        return entry
 
     def inicialize(self):
         print("Bienvenido a Lamac ¿Cómo desea entrar?")
@@ -56,8 +37,8 @@ class Interface:
 
         else:
             self.map_interface()
-
-
+    
+    # Specific Interfaces
     def citizen_interface(self, citizen: Citizen):
 
         def initiate_citizen():
@@ -278,22 +259,45 @@ class Interface:
 
             sensors_dict = General_state.get_sensors_formatted_data()
             zones = Zones([1, 2, 3, 4], sensors_dict)
+            statistics_by_zone = zones.get_statistics(int(map_entry), True)
+            table_data = self.format_statistics(statistics_by_zone, sensors_dict)
 
             zones.print_map_zone(int(map_entry))
+
+            print(f"-- Mostrando mapa de la zona {map_entry} --")
+            print(tabulate(table_data, headers="keys", tablefmt="fancy_grid"))
 
             initiate_map_interface()
             # TODO
 
         initiate_map_interface()
 
+    # Format Methods
     def format_statistics(self, statistics_by_zone, sensors):
             table_data = dict({ "ID": [], "Tipo de evento": [], "Descripcion": [], "Concurrencia": [] })
                 
             for i in range(len(statistics_by_zone)):
                 real_sensor = sensors.get(statistics_by_zone[i]["id_"])
 
-                table_data.get("ID").append(real_sensor.get_id())
-                table_data.get("Tipo de evento").append(real_sensor.event.get_type_event_str())
-                table_data.get("Descripcion").append(real_sensor.get_event_description())
-                table_data.get("Concurrencia").append(real_sensor.get_actual_concurrency())
+                table_data.get("ID").append(real_sensor["_id"])
+                table_data.get("Tipo de evento").append(real_sensor["event"]["type_event"])
+                table_data.get("Descripcion").append(real_sensor["event"]["description"])
+                table_data.get("Concurrencia").append(real_sensor["concurrency"])
             return table_data
+    
+    def control_data_entry(self, options_quantity) -> str:
+        'Solo puede retornar una opcion valida para el sistema'
+
+        entry = input().strip()
+
+        try:
+            for char in entry:
+                cast_test = int(char)
+        except:
+            entry = 1000
+
+        while not (int(entry) > 0 and int(entry) <= options_quantity):
+                print(f"Por favor introduzca una opción válida para ingresar al sistema (del 1 al {options_quantity}): ", end='')
+                entry = input()    
+
+        return entry

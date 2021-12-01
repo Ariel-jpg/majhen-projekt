@@ -49,7 +49,7 @@ class Map:
         return big_line
 
     def assign_event(self, x, y, concurrency):
-        self._list[y][x] = concurrency
+        self._list[x][y] = concurrency
 
     def assign_value(self, y, x, value):
         self._list[y][x] = value
