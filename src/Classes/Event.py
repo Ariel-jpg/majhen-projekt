@@ -46,3 +46,11 @@ class Party_event (Events):
 
     def get_type_event_str(self):
         return "Party"
+
+class Event_load:
+    def __init__(self, description, zone, concurrency, _id) -> None:
+        self.description = description
+        self.zone = zone
+        self.concurrency = 1
+        self._id = _id
+        

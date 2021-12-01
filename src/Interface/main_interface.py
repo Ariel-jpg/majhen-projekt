@@ -1,7 +1,6 @@
 
-from Import_index import Sensor_table, General_state, Citizen, Admin, Sensor
+from Import_index import General_state, Citizen, Admin, erase_screen
 from .Presenters import Presenters
-from json_module.json_main import Json
 from Map.Zones import Zones
 from tabulate import tabulate
 
@@ -165,11 +164,23 @@ class Interface:
                     print(f'El administrador con el id: {id_admin} fue eliminado.')
                     self.admin_interface(admin_logged)
 
-                elif options_admin_entry == '4':        #go back to admin menu
+                elif options_admin_entry == "4": # Show table by zone
+                    for zone in range(1, 5):
+                        print(f'-- Tabla de zona número {zone} --')
+                        sensors_dict = General_state.get_sensors_formatted_data()
+                        zones = Zones(zone, sensors_dict)
+                        statistics_by_zone = zones.get_statistics(int(zone), True)
+                        
+                        sensors = General_state.get_sensors_formatted_data()
+                        
+                        table_data = self.format_statistics(statistics_by_zone, sensors)
+                    
+                        print(tabulate(table_data, headers="keys", tablefmt="fancy_grid"))
+                    
                     self.admin_interface(admin_logged)
 
-            elif admin_entry == '4':
-                print('--  -- ')
+                elif options_admin_entry == '5':        #go back to admin menu
+                    self.admin_interface(admin_logged)
                 
             elif admin_entry == '5':        #  block citizen, show random citizen getting blocked
                 print('-- Opciones ciudadano seleccionado -- ')
@@ -198,14 +209,13 @@ class Interface:
                 elif citizen_options == '2':    #exit to admin menu
                     self.admin_interface(admin_logged)
 
-            elif admin_entry == '5':        # go back to main menu
+            elif admin_entry == '6':        # go back to main menu
                 self.inicialize()
 
         initiate_Admin()
     
     def sensor_interface(self):
         def initiate_sensor_interface():
-            
             print('Menu Sensores.')
             print('1. Sensores activos.')
             print('2. Volver al menu principal.')
@@ -268,7 +278,6 @@ class Interface:
             print(tabulate(table_data, headers="keys", tablefmt="fancy_grid"))
 
             initiate_map_interface()
-            # TODO
 
         initiate_map_interface()
 
@@ -299,5 +308,6 @@ class Interface:
         while not (int(entry) > 0 and int(entry) <= options_quantity):
                 print(f"Por favor introduzca una opción válida para ingresar al sistema (del 1 al {options_quantity}): ", end='')
                 entry = input()    
-
+            
+        erase_screen()
         return entry

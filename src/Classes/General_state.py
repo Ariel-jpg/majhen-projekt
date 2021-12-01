@@ -1,4 +1,5 @@
-from .Admin import Admin, Admin_dev
+from os import stat
+from .Admin import Admin_dev
 from .Event import Birthday_event, Concert_event, Party_event
 from .Requests_module.Event_report import Event_invite_friend
 from .Sensor import Sensor, Sensor_load
@@ -8,6 +9,7 @@ from .Modules.Dataset import dataset
 from .States.Admins_state import Admins_state
 from .States.Citizens_state import Citizens_state
 from .States.Requests_state import Requests_state
+from .Modules.json_module.json_main import Json
 
 # Static class
 class General_state:
@@ -26,24 +28,19 @@ class General_state:
         citizen_state.block_citizen(citizen_cuil)
 
     @staticmethod
-    def load_sensors():
-        sensor1 = Sensor_load(1, Concert_event(1, "Concierto 1"), 12)
-        sensor2 = Sensor_load(2, Concert_event(3, "Concierto 2"), 123)
-        sensor3 = Sensor_load(3, Concert_event(2, "Concierto 3"), 1000)
-        sensor4 = Sensor_load(4, Concert_event(3, "Concierto 4"), 900)
-        sensor5 = Sensor_load(5, Concert_event(1, "Concierto 5"), 54)
-        sensor6 = Sensor_load(6, Concert_event(1, "Concierto 34"), 1000)
-        sensor7 = Sensor_load(7, Concert_event(1, "Concierto 234"), 89)
-        sensor8 = Sensor_load(8, Concert_event(1, "Concierto 213"), 390)
+    def load_previous_status_of_sensors():
+        previous_sensors_state_dict = Json().load_json_from_file()
 
-        General_state.sensors.update({ sensor1.get_id(): sensor1 })
-        General_state.sensors.update({ sensor2.get_id(): sensor2 })
-        General_state.sensors.update({ sensor3.get_id(): sensor3 })
-        General_state.sensors.update({ sensor4.get_id(): sensor4 })
-        General_state.sensors.update({ sensor5.get_id(): sensor5 })
-        General_state.sensors.update({ sensor6.get_id(): sensor6 })
-        General_state.sensors.update({ sensor7.get_id(): sensor7 })
-        General_state.sensors.update({ sensor8.get_id(): sensor8 })
+        for sensor_id, sensor in previous_sensors_state_dict.items():
+            if sensor["event"]["type_event"] == "Party":
+                event = Party_event(sensor["event"]["zone"], sensor["event"]["description"])
+            elif sensor["event"]["type_event"] == "Concert":
+                event = Concert_event(sensor["event"]["zone"], sensor["event"]["description"])
+            else:
+                event = Birthday_event(sensor["event"]["zone"], sensor["event"]["description"])
+
+            General_state.sensors.update({ sensor_id: Sensor_load(sensor_id, event, sensor["concurrency"]) })
+
 
     @staticmethod
     def get_sensors():
@@ -69,7 +66,6 @@ class General_state:
             })
 
         return sensors_dict
-
     
     @staticmethod
     def load_instances():
@@ -80,8 +76,6 @@ class General_state:
         admins_state.add_admin_to_list("Lola") # dev
         admins_state.add_admin_to_list("Camila") # dev
         admins_state.add_admin_to_list("Maximo") # dev
-
-        General_state.load_sensors()
 
         General_state.citizens_state.add_citizen_to_list(Citizen.Citizen({ "name": "Ariel", "last_name": "Aguilera", "cuil" : "1234", "phone" : "123" }))
         counter = 0
@@ -104,7 +98,9 @@ class General_state:
     @staticmethod
     def load_sensor(sensor):
         General_state.sensors.update({ sensor.get_id() : sensor })
-        print()
+
+        sensors_formatted = General_state.get_sensors_formatted_data()
+        Json().save_json(sensors_formatted) # Persist updating sensors
 
     @staticmethod
     def block_admin(admin_id):

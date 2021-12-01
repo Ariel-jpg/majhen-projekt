@@ -1,5 +1,3 @@
-from colorama import init, Fore, Back, Style
-
 class Map:
     def __init__(self, length, width):
         self._map = self.make_map(length, width)
@@ -37,11 +35,6 @@ class Map:
         big_line = ""
 
         for y_coordinate in range(0, length):
-            if y_coordinate == 1:
-                print(Fore.WHITE)
-
-            elif y_coordinate == 3:
-                print(Fore.BLUE)
             big_line = big_line + self.s_row(width) + "\\n"
             big_line = big_line + self.row(width, y_coordinate) + "\\n"
 

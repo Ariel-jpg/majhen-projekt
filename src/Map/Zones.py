@@ -75,6 +75,6 @@ class Zones:
 
         if ranking:
             if not len(order_sensors) < 3: 
-                order_sensors = order_sensors[0::2]
+                order_sensors = order_sensors[0:2]
 
         return order_sensors

@@ -13,5 +13,6 @@ from Classes.Event import Birthday_event, Concert_event, Party_event, Events
 from Classes.Sensor import Sensor
 from Classes.Requests_module.Event_report import Event_invite_friend
 from Classes.Table import Table, Sensor_table, General_table
+from Classes.Modules.Erase_screen import erase_screen
 
 sys.path.append("..") # Relative imports works with this
